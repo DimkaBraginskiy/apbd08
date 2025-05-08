@@ -62,6 +62,11 @@ project.lock.json
 project.fragment.lock.json
 artifacts/
 
+bin/
+obj/
+.bundle/
+app.publish/
+
 # ASP.NET Scaffolding
 ScaffoldingReadMe.txt
 
@@ -399,3 +404,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+.idea/
+*.idea/
+*.dotCover
