@@ -24,4 +24,10 @@ public class ClientService : IClientService
         return id;
     }
     
+    public async Task<Client?> GetClientByIdAsync(CancellationToken token, int id)
+    {
+        var client = await ClientRepository.GetClientByIdAsync(token, id);
+        return client;
+    }
+    
 }

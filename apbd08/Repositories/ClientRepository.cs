@@ -65,7 +65,8 @@ WHERE CT.IdClient = @IdClient", connection);
         {
             await connection.OpenAsync(token);
             var command = new SqlCommand(@"insert into client (FirstName, LastName, Email, Telephone, Pesel)
-values (@FirstName, @LastName, @Email, @Telephone, @Pesel)");
+OUTPUT INSERTED.IdClient
+values (@FirstName, @LastName, @Email, @Telephone, @Pesel)", connection);
 
             command.Parameters.AddWithValue("@FirstName", client.FirstName);
             command.Parameters.AddWithValue("@LastName", client.LastName);
@@ -73,9 +74,33 @@ values (@FirstName, @LastName, @Email, @Telephone, @Pesel)");
             command.Parameters.AddWithValue("@Telephone", client.Telephone);
             command.Parameters.AddWithValue("@Pesel", client.Pesel);
 
-            var result = await command.ExecuteNonQueryAsync(token);
+            var result = await command.ExecuteScalarAsync(token);
 
             return Convert.ToInt32(result);
+        }
+    }
+
+    public async Task<Client?> GetClientByIdAsync(CancellationToken token, int id)
+    {
+        using (var connection = new SqlConnection(connectionString))
+        {
+            await connection.OpenAsync(token);
+            var command = new SqlCommand(@"SELECT * FROM Client WHERE IdClient = @IdClient", connection);
+            command.Parameters.AddWithValue("@IdClient", id);
+            var reader = await command.ExecuteReaderAsync(token);
+            if (await reader.ReadAsync(token))
+            {
+                return new Client
+                {
+                    IdClient = reader.GetInt32(reader.GetOrdinal("IdClient")),
+                    FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                    LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                    Email = reader.GetString(reader.GetOrdinal("Email")),
+                    Telephone = reader.GetString(reader.GetOrdinal("Telephone")),
+                    Pesel = reader.GetString(reader.GetOrdinal("Pesel"))
+                };
+            }
+            return null;
         }
     }
 }
