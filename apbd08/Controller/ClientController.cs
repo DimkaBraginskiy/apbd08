@@ -18,7 +18,7 @@ public class ClientController : ControllerBase
     }
 
     // Method for getting all trips which are associated with the client (it's provided id):
-    [HttpGet("{id}")]
+    [HttpGet("{id}/trips")]
     public async Task<IActionResult> GetClientsAsync(CancellationToken token, int id)
     {
         var clients = await _clientService.GetTripsByClientIdAsync(token, id);
