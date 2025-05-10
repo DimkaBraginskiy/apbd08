@@ -174,4 +174,35 @@ VALUES (@IdClient, @IdTrip, @RegisteredAt)", connection);
         DateTime currentDate = DateTime.Today;
         return currentDate.Year * 10000 + currentDate.Month * 100 + currentDate.Day;
     }
+    
+    public async Task<bool> RemoveClientFromTripAsync(CancellationToken token, int idClient, int idTrip)
+    {
+        using (var connection = new SqlConnection(connectionString))
+        {
+            await connection.OpenAsync(token);
+            
+            
+            //Checking whether the registration even exists:
+            var registrationExistsCommand = new SqlCommand(@"SELECT 1 FROM Client_Trip 
+         WHERE IdClient = @IdClient AND IdTrip = @IdTrip", connection);
+            registrationExistsCommand.Parameters.AddWithValue("@IdClient", idClient);
+            registrationExistsCommand.Parameters.AddWithValue("@IdTrip", idTrip);
+            if (await registrationExistsCommand.ExecuteScalarAsync(token) == null)
+            {
+                throw new ArgumentException("Client is not registered for any trips.");
+            }
+            
+            
+            // If everything is ok, deleting the client from the trip:
+
+            var deleteClientCommand =
+                new SqlCommand(@"DELETE FROM Client_Trip 
+                WHERE IdClient = @IdClient AND IdTrip = @IdTrip", connection);
+            deleteClientCommand.Parameters.AddWithValue("@IdClient", idClient);
+            deleteClientCommand.Parameters.AddWithValue("@IdTrip", idTrip);
+            
+            var affectedRows = await deleteClientCommand.ExecuteNonQueryAsync(token);
+            return affectedRows > 0;
+        }
+    }
 }

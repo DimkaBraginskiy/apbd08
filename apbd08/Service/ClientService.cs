@@ -38,4 +38,14 @@ public class ClientService : IClientService
             throw new Exception("Failed to assign client to trip.");
         }
     }
+
+    public async Task<bool> RemoveClientFromTripAsync(CancellationToken token,  int clientId, int tripId)
+    {
+        var succeeded = await ClientRepository.RemoveClientFromTripAsync(token,  clientId, tripId);
+        if (!succeeded)
+        {
+            throw new Exception("Failed to remove client from trip.");
+        }
+        return succeeded;
+    }
 }

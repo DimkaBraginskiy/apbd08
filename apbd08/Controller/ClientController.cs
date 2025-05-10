@@ -79,4 +79,22 @@ public class ClientController : ControllerBase
             RegisteredAt = DateTime.Now
         });
     }
+    
+    // Method for Client removal from the Trip based on provided IdTrip and IdClient:
+    [HttpDelete("{id}/trips/{tripId}")]
+    public async Task<IActionResult> RemoveClientFromTripAsync(CancellationToken token, [FromRoute] int id, [FromRoute] int tripId)
+    {
+        var succeeded = await _clientService.RemoveClientFromTripAsync(token, id, tripId);
+        if (!succeeded)
+        {
+            return NotFound();
+        }
+        return Ok(new
+        {
+            Message = "Client removed from trip successfully",
+            IdClient = id,
+            IdTrip = tripId,
+            RemovedAt = DateTime.Now
+        });
+    }
 }
