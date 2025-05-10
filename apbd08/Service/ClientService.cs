@@ -30,4 +30,12 @@ public class ClientService : IClientService
         return client;
     }
     
+    public async Task AssignClientToTripAsync(CancellationToken token, int clientId, int tripId)
+    {
+        var succeeded = await ClientRepository.AssignClientToTripAsync(token, clientId, tripId);
+        if (!succeeded)
+        {
+            throw new Exception("Failed to assign client to trip.");
+        }
+    }
 }

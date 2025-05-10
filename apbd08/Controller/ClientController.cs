@@ -17,7 +17,7 @@ public class ClientController : ControllerBase
         _clientService = clientService;
     }
 
-
+    // Method for getting all trips which are associated with the client (it's provided id):
     [HttpGet("{id}")]
     public async Task<IActionResult> GetClientsAsync(CancellationToken token, int id)
     {
@@ -36,6 +36,7 @@ public class ClientController : ControllerBase
         return Ok(client);
     }
     
+    // Mehtod for adding a new Client to the database using DTO to avoid unnecessary fields which are not mentioned in the task:
     [HttpPost]
     public async Task<IActionResult> AddClientAsync(CancellationToken token, [FromBody] ClientCreateDto clientDto)
     {
@@ -63,5 +64,19 @@ public class ClientController : ControllerBase
         
         var response = new ClientResponseIdDto { IdClient = id };
         return CreatedAtRoute("GetClientById", new { id }, response);
+    }
+
+    // Assigning a Client to a Trip by passing id of the Client and if of the Trip:
+    [HttpPut("{id}/trips/{tripId}")]
+    public async Task<IActionResult> AssignClientToTripAsync(CancellationToken token, [FromRoute] int id, [FromRoute] int tripId)
+    {
+        
+        await _clientService.AssignClientToTripAsync(token, id, tripId);
+        return Ok(new {
+            Message = "Client assigned to trip successfully",
+            IdClient = id,
+            IdTrip = tripId,
+            RegisteredAt = DateTime.Now
+        });
     }
 }
