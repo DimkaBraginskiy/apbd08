@@ -18,8 +18,9 @@ public class ClientController : ControllerBase
     }
 
     // Method for getting all trips which are associated with the client (it's provided id):
+    //***not sure whether should I use here another dto identically the same as Model...
     [HttpGet("{id}/trips")]
-    public async Task<IActionResult> GetClientsAsync(CancellationToken token, int id)
+    public async Task<IActionResult> GetClientsAsync(CancellationToken token, int id) 
     {
         var clients = await _clientService.GetTripsByClientIdAsync(token, id);
         return Ok(clients);
