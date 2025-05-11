@@ -5,12 +5,17 @@ namespace apbd08.Repositories;
 
 public class ClientRepository
 {
-    string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=apbd;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+    private readonly string _connectionString;
+
+    public ClientRepository(IConfiguration configuration)
+    {
+        _connectionString = configuration.GetConnectionString("DefaultConnection");
+    }
 
     //Method for getting all trips for a given client id:
     public async Task<List<Trip>> GetTripsAsync(CancellationToken token, int IdClient)
     {
-        using (var connection = new SqlConnection(connectionString))
+        using (var connection = new SqlConnection(_connectionString))
         {
             
             // Selecting all values of trips, names of countries, and two additional columns from Client_Trip table on the condition that the client id exists in Client_Trip table:
@@ -63,7 +68,7 @@ WHERE CT.IdClient = @IdClient", connection);
     // Method for adding a new Client to the database:
     public async Task<int> AddClientAsync(CancellationToken token, Client client)
     {
-        using (var connection = new SqlConnection(connectionString))
+        using (var connection = new SqlConnection(_connectionString))
         {
             await connection.OpenAsync(token);
             var command = new SqlCommand(@"insert into client (FirstName, LastName, Email, Telephone, Pesel)
@@ -85,7 +90,7 @@ values (@FirstName, @LastName, @Email, @Telephone, @Pesel)", connection);
     // Method for getting a single Client by IdClient (it's id):
     public async Task<Client?> GetClientByIdAsync(CancellationToken token, int id)
     {
-        using (var connection = new SqlConnection(connectionString))
+        using (var connection = new SqlConnection(_connectionString))
         {
             // Selecting everything from Client table based on provided id:
             await connection.OpenAsync(token);
@@ -111,7 +116,7 @@ values (@FirstName, @LastName, @Email, @Telephone, @Pesel)", connection);
     // Method for assignment to a Client_Trip table values: IdClient, IdTrip, RegisteredAt:
     public async Task<bool> AssignClientToTripAsync(CancellationToken token, int idClient, int idTrip)
     {
-        using (var connection = new SqlConnection(connectionString))
+        using (var connection = new SqlConnection(_connectionString))
         {
             await connection.OpenAsync(token);
             
@@ -177,7 +182,7 @@ VALUES (@IdClient, @IdTrip, @RegisteredAt)", connection);
     
     public async Task<bool> RemoveClientFromTripAsync(CancellationToken token, int idClient, int idTrip)
     {
-        using (var connection = new SqlConnection(connectionString))
+        using (var connection = new SqlConnection(_connectionString))
         {
             await connection.OpenAsync(token);
             

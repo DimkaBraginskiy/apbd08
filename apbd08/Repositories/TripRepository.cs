@@ -5,11 +5,18 @@ namespace apbd08.Repositories;
 
 public class TripRepository
 {
-    string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=apbd;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+    private readonly string _connectionString;
+
+    public TripRepository(IConfiguration configuration)
+    {
+        _connectionString = configuration.GetConnectionString("DefaultConnection");
+    }
+    
+    
     
     public async Task<List<Trip>> GetTripsAsync(CancellationToken token)
     {
-        using (var connection = new SqlConnection(connectionString))
+        using (var connection = new SqlConnection(_connectionString))
         {
             await connection.OpenAsync(token);
             var command = new SqlCommand(@"SELECT Trip.*, Country.Name AS NameCountry FROM trip
