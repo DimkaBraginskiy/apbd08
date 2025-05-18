@@ -114,7 +114,7 @@ values (@FirstName, @LastName, @Email, @Telephone, @Pesel)", connection);
     }
     
     // Method for assignment to a Client_Trip table values: IdClient, IdTrip, RegisteredAt:
-    public async Task<bool> AssignClientToTripAsync(CancellationToken token, int idClient, int idTrip)
+    public async Task<DateTime> AssignClientToTripAsync(CancellationToken token, int idClient, int idTrip)
     {
         using (var connection = new SqlConnection(_connectionString))
         {
@@ -163,6 +163,7 @@ values (@FirstName, @LastName, @Email, @Telephone, @Pesel)", connection);
             
             //After all checks Inserting:
             
+            var registeredAt = DateTime.Today;
             var insertCommand = new SqlCommand(@"INSERT INTO Client_Trip (IdClient, IdTrip, RegisteredAt) 
 VALUES (@IdClient, @IdTrip, @RegisteredAt)", connection);
             insertCommand.Parameters.AddWithValue("@IdClient", idClient);
@@ -170,7 +171,12 @@ VALUES (@IdClient, @IdTrip, @RegisteredAt)", connection);
             insertCommand.Parameters.AddWithValue("@RegisteredAt", GetCurrentDateAsInt());
             
             int affected = await insertCommand.ExecuteNonQueryAsync(token);
-            return affected > 0;
+            if (affected == 0)
+            {
+                throw new Exception("Failed to assign client to trip.");
+            }
+
+            return registeredAt;
         }
     }
     //Method for converting DateTime to int in YYYYMMDD format
@@ -179,7 +185,7 @@ VALUES (@IdClient, @IdTrip, @RegisteredAt)", connection);
         DateTime currentDate = DateTime.Today;
         return currentDate.Year * 10000 + currentDate.Month * 100 + currentDate.Day;
     }
-    
+
     public async Task<bool> RemoveClientFromTripAsync(CancellationToken token, int idClient, int idTrip)
     {
         using (var connection = new SqlConnection(_connectionString))

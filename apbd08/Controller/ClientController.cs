@@ -68,13 +68,31 @@ public class ClientController : ControllerBase
     public async Task<IActionResult> AssignClientToTripAsync(CancellationToken token, [FromRoute] int id, [FromRoute] int tripId)
     {
         
-        await _clientService.AssignClientToTripAsync(token, id, tripId);
-        return Ok(new {
-            Message = "Client assigned to trip successfully",
-            IdClient = id,
-            IdTrip = tripId,
-            RegisteredAt = DateTime.Now
-        });
+        try
+        {
+            var registeredAt = await _clientService.AssignClientToTripAsync(token, id, tripId);
+
+            var response = new ClientTripAssignResponseDto()
+            {
+                IdClient = id,
+                IdTrip = tripId,
+                RegisteredAt = registeredAt
+            };
+
+            return Ok(response);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { error = ex.Message });
+        }
     }
     
     // Method for Client removal from the Trip based on provided IdTrip and IdClient:

@@ -41,13 +41,10 @@ public class ClientService : IClientService
         return client;
     }
     
-    public async Task AssignClientToTripAsync(CancellationToken token, int clientId, int tripId)
+    public async Task<DateTime> AssignClientToTripAsync(CancellationToken token, int clientId, int tripId)
     {
-        var succeeded = await ClientRepository.AssignClientToTripAsync(token, clientId, tripId);
-        if (!succeeded)
-        {
-            throw new Exception("Failed to assign client to trip.");
-        }
+        var registeredAt = await ClientRepository.AssignClientToTripAsync(token, clientId, tripId);
+        return registeredAt;
     }
 
     public async Task<bool> RemoveClientFromTripAsync(CancellationToken token,  int clientId, int tripId)
