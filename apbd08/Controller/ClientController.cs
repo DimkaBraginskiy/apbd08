@@ -76,7 +76,8 @@ public class ClientController : ControllerBase
             {
                 IdClient = id,
                 IdTrip = tripId,
-                RegisteredAt = registeredAt
+                RegisteredAt = registeredAt,
+                Message = "Client assigned to trip successfully"
             };
 
             return Ok(response);
@@ -104,12 +105,16 @@ public class ClientController : ControllerBase
         {
             return NotFound();
         }
-        return Ok(new
+
+        var response = new ClientTripDeleteResponseDto()
         {
             Message = "Client removed from trip successfully",
             IdClient = id,
             IdTrip = tripId,
             RemovedAt = DateTime.Now
-        });
+        };
+
+
+        return Ok(response);
     }
 }
