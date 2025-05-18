@@ -1,4 +1,5 @@
 ﻿using apbd08.Repositories;
+using apbd08.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace apbd08.Controller;
@@ -7,11 +8,11 @@ namespace apbd08.Controller;
 [ApiController]
 public class TripController : ControllerBase
 {
-    private TripRepository _tripRepository;
+    private ITripService _tripService;
 
-    public TripController(TripRepository tripRepository)
+    public TripController(ITripService tripService)
     {
-        _tripRepository = tripRepository;
+        _tripService = tripService;
     }
 
 
@@ -19,7 +20,6 @@ public class TripController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetTrips(CancellationToken token)
     {
-     
-        return Ok(await _tripRepository.GetTripsAsync(token));
+        return Ok(await _tripService.GetTripsAsync(token));
     }
 }

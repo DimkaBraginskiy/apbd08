@@ -12,6 +12,7 @@ public class Program
         builder.Services.AddScoped<TripRepository>();
         builder.Services.AddScoped<ClientRepository>();
         builder.Services.AddScoped<IClientService, ClientService>();
+        builder.Services.AddScoped<ITripService, TripService>();
         
         // 2. Adding our own services
         

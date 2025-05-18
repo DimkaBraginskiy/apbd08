@@ -1,6 +1,6 @@
 ﻿namespace apbd08.Model.DTOs;
 
-public class TripBasicDto
+public class TripResponseDto
 {
     public int IdTrip { get; set; }
     public string Name { get; set; }
@@ -9,5 +9,5 @@ public class TripBasicDto
     public DateTime DateTo { get; set; }
     public int MaxPeople { get; set; }
     
-    public ICollection<Country> Countries { get; set; }
+    public ICollection<CountryResponseDto> Countries { get; set; }
 }
