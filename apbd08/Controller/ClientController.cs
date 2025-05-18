@@ -22,8 +22,15 @@ public class ClientController : ControllerBase
     [HttpGet("{id}/trips")]
     public async Task<IActionResult> GetClientsAsync(CancellationToken token, int id) 
     {
-        var clients = await _clientService.GetTripsByClientIdAsync(token, id);
-        return Ok(clients);
+        var client = await _clientService.GetClientByIdAsync(token, id);
+        if (client == null)
+            return NotFound($"Client with ID {id} does not exist.");
+
+        var trips = await _clientService.GetTripsByClientIdAsync(token, id);
+        if (trips.Count == 0)
+            return NotFound($"Client with ID {id} is not registered for any trips.");
+
+        return Ok(trips);
     }
     
     [HttpGet("{id}", Name = "GetClientById")]

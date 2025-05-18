@@ -43,7 +43,7 @@ JOIN COUNTRY ON Country_Trip.IdCountry = COUNTRY.IdCountry", connection);
                         {
                             new CountryResponseDto
                             {
-                                name = reader.GetString(reader.GetOrdinal("NameCountry"))
+                                Name = reader.GetString(reader.GetOrdinal("NameCountry"))
                             }
                         }
                             /*new[]
@@ -60,7 +60,7 @@ JOIN COUNTRY ON Country_Trip.IdCountry = COUNTRY.IdCountry", connection);
                 {
                     var country = new CountryResponseDto()
                     {
-                        name = reader.GetString(reader.GetOrdinal("NameCountry"))
+                        Name = reader.GetString(reader.GetOrdinal("NameCountry"))
                     };
                     found.Countries.Add(country);
                 }

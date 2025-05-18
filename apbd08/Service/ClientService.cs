@@ -1,4 +1,5 @@
 ﻿using apbd08.Model;
+using apbd08.Model.DTOs;
 using apbd08.Repositories;
 
 namespace apbd08.Service;
@@ -12,7 +13,7 @@ public class ClientService : IClientService
         ClientRepository = clientRepository;
     }
     
-    public async Task<List<Trip>> GetTripsByClientIdAsync(CancellationToken token, int Id)
+    public async Task<List<ClientTripDto>> GetTripsByClientIdAsync(CancellationToken token, int Id)
     {
         var clients = await ClientRepository.GetTripsAsync(token, Id);
         return clients;   

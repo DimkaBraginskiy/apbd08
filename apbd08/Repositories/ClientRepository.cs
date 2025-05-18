@@ -1,4 +1,5 @@
 ﻿using apbd08.Model;
+using apbd08.Model.DTOs;
 using Microsoft.Data.SqlClient;
 
 namespace apbd08.Repositories;
@@ -13,7 +14,7 @@ public class ClientRepository
     }
 
     //Method for getting all trips for a given client id:
-    public async Task<List<Trip>> GetTripsAsync(CancellationToken token, int IdClient)
+    public async Task<List<ClientTripDto>> GetTripsAsync(CancellationToken token, int IdClient)
     {
         using (var connection = new SqlConnection(_connectionString))
         {
@@ -27,13 +28,13 @@ JOIN Client_Trip CT on trip.IdTrip = CT.IdTrip
 WHERE CT.IdClient = @IdClient", connection);
             command.Parameters.AddWithValue("@IdClient", IdClient);
             var reader = await command.ExecuteReaderAsync(token);
-            var trips = new List<Trip>();
+            var trips = new List<ClientTripDto>();
             while (await reader.ReadAsync(token))
             {
                 var found = trips.FirstOrDefault(t => t.IdTrip == reader.GetInt32(reader.GetOrdinal("IdTrip")));
                 if (found == null)
                 {
-                    var trip = new Trip
+                    var trip = new ClientTripDto()
                     {
                         IdTrip = reader.GetInt32(reader.GetOrdinal("IdTrip")),
                         Name = reader.GetString(reader.GetOrdinal("Name")),
@@ -41,20 +42,19 @@ WHERE CT.IdClient = @IdClient", connection);
                         DateFrom = reader.GetDateTime(reader.GetOrdinal("DateFrom")),
                         DateTo = reader.GetDateTime(reader.GetOrdinal("DateTo")),
                         MaxPeople = reader.GetInt32(reader.GetOrdinal("MaxPeople")),
-                        Countries = new List<Country>(
-                            new[]
+                        Countries = new List<CountryResponseDto>
+                        {
+                            new CountryResponseDto
                             {
-                                new Country
-                                {
-                                    Name = reader.GetString(reader.GetOrdinal("NameCountry"))
-                                }
-                            })
+                                Name = reader.GetString(reader.GetOrdinal("NameCountry"))
+                            }
+                        }
                     };
                     trips.Add(trip);    
                 }
                 else
                 {
-                    var country = new Country
+                    var country = new CountryResponseDto()
                     {
                         Name = reader.GetString(reader.GetOrdinal("NameCountry"))
                     };
