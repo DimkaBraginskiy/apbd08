@@ -1,6 +1,6 @@
 ﻿namespace apbd08.Model.DTOs;
 
-public class ClientResponseIdDto
+public class ClientResponseDto
 {
     public int IdClient { get; set; }
 }

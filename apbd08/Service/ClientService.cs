@@ -19,10 +19,20 @@ public class ClientService : IClientService
         return clients;   
     }
     
-    public async Task<int> AddClientAsync(CancellationToken token, Client client)
+    public async Task<ClientResponseDto> AddClientAsync(CancellationToken token, ClientRequestDto clientDto)
     {
+        var client = new Client
+        {
+            FirstName = clientDto.FirstName,
+            LastName = clientDto.LastName,
+            Email = clientDto.Email,
+            Telephone = clientDto.Telephone,
+            Pesel = clientDto.Pesel
+        };
+        
         var id = await ClientRepository.AddClientAsync(token, client);
-        return id;
+
+        return new ClientResponseDto { IdClient = id };
     }
     
     public async Task<Client?> GetClientByIdAsync(CancellationToken token, int id)

@@ -46,7 +46,7 @@ public class ClientController : ControllerBase
     
     // Mehtod for adding a new Client to the database using DTO to avoid unnecessary fields which are not mentioned in the task:
     [HttpPost]
-    public async Task<IActionResult> AddClientAsync(CancellationToken token, [FromBody] ClientCreateDto clientDto)
+    public async Task<IActionResult> AddClientAsync(CancellationToken token, [FromBody] ClientRequestDto clientDto)
     {
         if (clientDto == null)
         {
@@ -58,20 +58,9 @@ public class ClientController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var client = new Client
-        {
-            FirstName = clientDto.FirstName,
-            LastName = clientDto.LastName,
-            Email = clientDto.Email,
-            Telephone = clientDto.Telephone,
-            Pesel = clientDto.Pesel
-        };
+        var response = await _clientService.AddClientAsync(token, clientDto);
         
-        
-        var id = await _clientService.AddClientAsync(token, client);
-        
-        var response = new ClientResponseIdDto { IdClient = id };
-        return CreatedAtRoute("GetClientById", new { id }, response);
+        return CreatedAtRoute("GetClientById", new { id = response.IdClient }, response);
     }
 
     // Assigning a Client to a Trip by passing id of the Client and if of the Trip:
