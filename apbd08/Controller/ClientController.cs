@@ -67,7 +67,6 @@ public class ClientController : ControllerBase
     [HttpPut("{id}/trips/{tripId}")]
     public async Task<IActionResult> AssignClientToTripAsync(CancellationToken token, [FromRoute] int id, [FromRoute] int tripId)
     {
-        
         try
         {
             var registeredAt = await _clientService.AssignClientToTripAsync(token, id, tripId);
@@ -100,21 +99,40 @@ public class ClientController : ControllerBase
     [HttpDelete("{id}/trips/{tripId}")]
     public async Task<IActionResult> RemoveClientFromTripAsync(CancellationToken token, [FromRoute] int id, [FromRoute] int tripId)
     {
-        var succeeded = await _clientService.RemoveClientFromTripAsync(token, id, tripId);
-        if (!succeeded)
+        try
         {
-            return NotFound();
+            var succeeded = await _clientService.RemoveClientFromTripAsync(token, id, tripId);
+            if (!succeeded)
+            {
+                return NotFound();
+            }
+
+            var response = new ClientTripDeleteResponseDto()
+            {
+                Message = "Client removed from trip successfully",
+                IdClient = id,
+                IdTrip = tripId,
+                RemovedAt = DateTime.Now
+            };
+
+
+            return Ok(response);
         }
-
-        var response = new ClientTripDeleteResponseDto()
+        catch (ArgumentException ex)
         {
-            Message = "Client removed from trip successfully",
-            IdClient = id,
-            IdTrip = tripId,
-            RemovedAt = DateTime.Now
-        };
-
-
-        return Ok(response);
+            return BadRequest(new { error = ex.Message });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = "An unexpected error occurred." });
+        }
     }
 }

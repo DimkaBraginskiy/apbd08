@@ -14,8 +14,8 @@ public class TripController : ControllerBase
     {
         _tripService = tripService;
     }
-
-
+    
+    
     // Method for getting all trips from the database:
     [HttpGet]
     public async Task<IActionResult> GetTrips(CancellationToken token)

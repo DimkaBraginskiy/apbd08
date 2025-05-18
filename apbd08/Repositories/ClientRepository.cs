@@ -18,7 +18,6 @@ public class ClientRepository
     {
         using (var connection = new SqlConnection(_connectionString))
         {
-            
             // Selecting all values of trips, names of countries, and two additional columns from Client_Trip table on the condition that the client id exists in Client_Trip table:
             await connection.OpenAsync(token);
             var command = new SqlCommand(@"SELECT Trip.*, Country.Name AS NameCountry, CT.RegisteredAt, CT.PaymentDate FROM trip
@@ -159,7 +158,6 @@ values (@FirstName, @LastName, @Email, @Telephone, @Pesel)", connection);
             {
                 throw new ArgumentException("Trip is already full.");
             }
-            
             
             //After all checks Inserting:
             

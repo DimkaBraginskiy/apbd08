@@ -46,13 +46,6 @@ JOIN COUNTRY ON Country_Trip.IdCountry = COUNTRY.IdCountry", connection);
                                 Name = reader.GetString(reader.GetOrdinal("NameCountry"))
                             }
                         }
-                            /*new[]
-                            {
-                                new Country
-                                {
-                                    Name = reader.GetString(reader.GetOrdinal("NameCountry"))
-                                }
-                            }*/
                     };
                     trips.Add(trip);    
                 }
